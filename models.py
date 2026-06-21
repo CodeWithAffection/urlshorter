@@ -1,6 +1,6 @@
 from datetime import datetime,timezone
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, Integer, TIMESTAMP, text
+from sqlalchemy import Column, String, Integer, TIMESTAMP, text, ForeignKey
 from pydantic import BaseModel
 from typing import Optional
 
@@ -14,6 +14,11 @@ class urls(Base):
     created_at = Column(TIMESTAMP(timezone=True), primary_key=False, nullable=True, server_default=text("now()"))
     updated_at = Column(TIMESTAMP(timezone=True), primary_key=False, nullable=True, server_default=text("now()"))
 
+class deletes(Base):
+    __tablename__ = "deletes"
+    id = Column(Integer, primary_key=True, nullable=False, default=1)
+    count = Column(Integer, primary_key=False, nullable=False)
+    
 class CreateShort(BaseModel):
     url : str
     shorted_url : str
