@@ -16,7 +16,7 @@ class urls(Base):
 
 class deletes(Base):
     __tablename__ = "deletes"
-    id = Column(Integer, primary_key=True, nullable=False, default=1)
+    id = Column(Integer, primary_key=True, nullable=False)
     count = Column(Integer, primary_key=False, nullable=False)
     
 class CreateShort(BaseModel):

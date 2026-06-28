@@ -3,6 +3,7 @@ import asyncio
 from models import GetUrl, CreateShort, urls, DelUrl, deletes
 from database import sessionmaker, get_db
 from algorithm import get_short
+from datetime import datetime, timezone
 from sqlalchemy import select, delete
 
 
@@ -26,6 +27,8 @@ async def short_create(url : str, session : sessionmaker = Depends(get_db)) -> G
 @router.get("/{id}", response_model=GetUrl, status_code=status.HTTP_200_OK)
 async def short_get(id : int, session : sessionmaker = Depends(get_db)) -> GetUrl:
     u = session.get(urls, id)
+    if u is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="not found")
     return u
 
 @router.delete("/{id}", response_model=DelUrl, status_code=status.HTTP_202_ACCEPTED)
@@ -43,5 +46,17 @@ async def short_del(id : int, session : sessionmaker = Depends(get_db)) -> DelUr
     session.delete(u)
     session.commit()
     return delu
+
+@router.patch("/{name}", response_model=GetUrl, status_code=status.HTTP_200_OK)
+async def short_patch(id : int, url : str, session : sessionmaker = Depends(get_db)) -> GetUrl:
+    obj = session.get(urls, id)
+    if obj is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="not found")
+    obj.url = url
+    obj.updated_at = datetime.now(timezone.utc)
+    session.commit()
+    session.refresh(obj)
+    return obj
+
 
     
